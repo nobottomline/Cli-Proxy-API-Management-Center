@@ -59,7 +59,7 @@ screenshots. Production verification must be limited to authenticated read-only
 quota operations; consuming banked reset grants is not a verification step.
 
 
-## Release qualification: v1.26.7-ledger.1
+## Release qualification: v1.26.7-ledger.2
 
 - 1,667 Bun tests passed; ESLint, TypeScript and the single-file production build passed.
 - All 12 optional helper Python regressions passed; deployment/demo scripts compiled.
@@ -75,3 +75,7 @@ quota operations; consuming banked reset grants is not a verification step.
 
 Screenshots in this repository contain only fixture accounts. Live gateway
 qualification is read-only and recorded separately from the public test fixture.
+
+The initial CI run exposed a pre-existing locale/order-sensitive cooldown test:
+English apostrophes in an HTML title must be compared after React attribute
+encoding. The assertion was corrected without changing runtime cooldown behavior.

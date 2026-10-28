@@ -225,7 +225,12 @@ describe('cooldown section rendering', () => {
 
     const available = render(snapshot, { onReset: () => {} });
     expect(available).toContain(i18n.t('auth_files.cooldown_reset_button'));
-    expect(available).toContain(i18n.t('auth_files.cooldown_reset_hint'));
+    // The suite can select English before this test on Linux. Compare the HTML
+    // attribute with React's encoding, including the apostrophe in credential's.
+    const hintAttribute = renderToStaticMarkup(
+      createElement('span', { title: i18n.t('auth_files.cooldown_reset_hint') })
+    ).match(/title="[^"]*"/)![0];
+    expect(available).toContain(hintAttribute);
     expect(available).not.toContain('disabled=""');
 
     const pending = render(snapshot, { onReset: () => {}, resetting: true });
