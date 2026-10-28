@@ -218,3 +218,89 @@
     gap: 16px;
   }
 }
+
+/* Ledger changes only this quota route; the Cards composition stays intact. */
+.ledgerPage {
+  gap: 0;
+  .workbench {
+    gap: 24px;
+  }
+  .toolbar {
+    order: 0;
+  }
+  .search {
+    background: transparent;
+    flex-basis: 360px;
+    border-radius: 0;
+  }
+  .searchInput {
+    font-size: 14px;
+  }
+  .sort {
+    min-width: 140px;
+  }
+}
+.toolbarActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ledgerRefresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  background: transparent;
+  cursor: pointer;
+  &:hover:not(:disabled) {
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+  }
+  &:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+  }
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 640px) {
+  .ledgerPage .search {
+    flex-basis: 100%;
+  }
+  .toolbarActions {
+    gap: 6px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .ledgerPage .sort {
+    min-width: 110px;
+  }
+}
+
+.viewSelect {
+  width: 104px;
+  min-width: 104px;
+}
+.ledgerPage .viewSelect button {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}

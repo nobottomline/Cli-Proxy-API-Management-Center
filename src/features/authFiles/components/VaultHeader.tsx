@@ -1,3 +1,4 @@
+import { WindowStartControls } from '@/features/windowStart/WindowStart';
 import { useTranslation } from 'react-i18next';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { IconRefreshCw, IconUpload } from '@/components/ui/icons';
@@ -70,6 +71,7 @@ export function VaultHeader(props: VaultHeaderProps) {
         </p>
       </div>
       <div className={styles.actions} data-reveal>
+        <WindowStartControls />
         {onRefreshCredentials && (
           <button
             type="button"

@@ -2316,5 +2316,53 @@
     "error": "Liên kết thất bại. Hãy bắt đầu lại.",
     "unsupported": "Máy chủ này không hỗ trợ liên kết SIWC.",
     "expired": "Phiên liên kết đã hết hạn. Hãy bắt đầu lại."
+  },
+  "window_start": {
+    "title": "Claude session windows",
+    "complete": "Window check complete. Hover each account’s play/check icon for its result.",
+    "all": "Start windows",
+    "one": "Start account window",
+    "running": "Checking accounts…",
+    "hint": "Manual only. Active windows and exhausted limits are skipped. At most one tiny message per eligible account; routing order stays unchanged.",
+    "reset": "Resets",
+    "tokens": "{{input}} input / {{output}} output tokens",
+    "error": "Window service unavailable. No automatic retry.",
+    "refresh": "Check connection",
+    "states": {
+      "queued": "Queued",
+      "checking": "Checking limits",
+      "sending": "Sending one message",
+      "confirming": "Confirming window",
+      "active": "Window already active; no message sent",
+      "started": "Window start confirmed",
+      "skipped": "Skipped: disabled, exhausted or repeat protection",
+      "error": "Request/check failed; no automatic retry",
+      "unconfirmed": "Reply received; window start unconfirmed",
+      "interrupted": "Check interrupted; no automatic retry"
+    }
+  },
+  "quota_ledger": {
+    "view": "Quota view",
+    "ledger": "Ledger",
+    "classic": "Cards",
+    "provider": "Provider",
+    "credentials_one": "{{count}} credential",
+    "credentials_other": "{{count}} credentials",
+    "show": "Show",
+    "hide": "Hide",
+    "aggregate_hint": "Sum of each account’s remaining percentage. Different subscriptions do not share a token budget.",
+    "back": "back {{time}}",
+    "last_checked": "Last checked {{time}}",
+    "not_checked": "Not checked yet",
+    "loading": "Loading…",
+    "stale": "Refresh failed · showing last observation",
+    "load_failed": "Could not load quota · refresh to retry",
+    "resets_remaining": "Resets remaining:",
+    "reset_limits": "Reset limits",
+    "refresh_quota": "Refresh quota",
+    "more_details": "Details",
+    "no_reset": "No reset pending",
+    "not_reported": "Not reported",
+    "unknown": "Unknown remaining allowance"
   }
 }

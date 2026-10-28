@@ -34,3 +34,9 @@ settings.local.json
 *.njsproj
 *.sln
 *.sw?
+
+# Local Python/operator and review artifacts
+__pycache__/
+*.py[cod]
+.venv/
+.impeccable/review/

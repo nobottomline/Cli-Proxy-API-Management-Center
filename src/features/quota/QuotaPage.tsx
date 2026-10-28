@@ -1,3 +1,7 @@
+import { ledgerIdentity } from './ledgerModel';
+import { QuotaLedger } from './components/QuotaLedger';
+import { useQuotaView, type QuotaView } from './viewPreference';
+import { WindowStartControls } from '@/features/windowStart/WindowStart';
 /**
  * 额度查询页：提供商 tabs + 统一卡网格。
  *
@@ -13,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { authFilesApi } from '@/services/api';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { IconSearch, IconX } from '@/components/ui/icons';
+import { IconSearch, IconX, IconRefreshCw } from '@/components/ui/icons';
 import { Select } from '@/components/ui/Select';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
@@ -64,6 +68,7 @@ const displayNameFor = (name: string) => name;
 
 export function QuotaPage() {
   const { t } = useTranslation();
+  const { view, setView } = useQuotaView();
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const resolvedTheme: ResolvedTheme = useThemeStore((state) => state.resolvedTheme);
 
@@ -299,7 +304,27 @@ export function QuotaPage() {
     loadQuota
   );
 
+  const ledgerDisplayNameFor = useCallback(
+    (name: string) => {
+      const entry = entries.find((candidate) => candidate.file.name === name);
+      return entry ? ledgerIdentity(entry.file) : name;
+    },
+    [entries]
+  );
+
   const canUseActions = !disableControls && !loading && filesGeneration === sessionGeneration;
+
+  // Ledger needs observations for its comparison rows. Read each visible idle
+  // credential once; Cards keeps its established click-to-load behavior. Errors
+  // remain explicit and are never put into an automatic retry loop.
+  useEffect(() => {
+    if (view !== 'ledger' || !canUseActions || batchLoading || error) return;
+    const pending = pageItems.filter((entry) => {
+      const status = getQuota(entry)?.status;
+      return !status || status === 'idle';
+    });
+    if (pending.length) void loadQuota(pending);
+  }, [view, canUseActions, batchLoading, error, pageItems, getQuota, loadQuota]);
 
   /* ---------- 首屏卡片一次性级联入场 ----------
    * 首批数据渲染后立即翻转 cardsAnimated；已挂载的卡片在挂载时捕获过自己的
@@ -324,27 +349,36 @@ export function QuotaPage() {
   const isEmpty = !loading && filteredEntries.length === 0;
 
   return (
-    <div className={styles.page} ref={revealRef}>
-      <QuotaHeader
-        totalCount={entries.length}
-        loadedCount={loadedCount}
-        attentionCount={attentionCount}
-        refreshing={loading || batchLoading}
-        disableControls={disableControls}
-        onRefreshAll={handleRefreshAll}
-      />
+    <div
+      className={`${styles.page} ${view === 'ledger' ? styles.ledgerPage : ''}`}
+      ref={revealRef}
+      data-quota-view={view}
+    >
+      {view === 'ledger' && <h1 className={styles.srOnly}>{t('quota_management.title')}</h1>}
+      {view === 'classic' && (
+        <QuotaHeader
+          totalCount={entries.length}
+          loadedCount={loadedCount}
+          attentionCount={attentionCount}
+          refreshing={loading || batchLoading}
+          disableControls={disableControls}
+          onRefreshAll={handleRefreshAll}
+        />
+      )}
 
       <section className={styles.workbench}>
         {/* 提供商导航与搜索工具栏分层，避免不同控件争夺视觉焦点。 */}
-        <div className={styles.tabsRow} data-reveal>
-          <ProviderTabs
-            types={TAB_IDS}
-            counts={tabCounts}
-            active={tab}
-            resolvedTheme={resolvedTheme}
-            onChange={handleTabChange}
-          />
-        </div>
+        {view === 'classic' && (
+          <div className={styles.tabsRow} data-reveal>
+            <ProviderTabs
+              types={TAB_IDS}
+              counts={tabCounts}
+              active={tab}
+              resolvedTheme={resolvedTheme}
+              onChange={handleTabChange}
+            />
+          </div>
+        )}
 
         <div className={styles.toolbar}>
           <div className={styles.search}>
@@ -373,14 +407,55 @@ export function QuotaPage() {
               </button>
             )}
           </div>
-          <div className={styles.sort}>
+          <div className={styles.toolbarActions}>
+            {view === 'ledger' && (
+              <>
+                <WindowStartControls compact />
+                <button
+                  type="button"
+                  className={styles.ledgerRefresh}
+                  onClick={handleRefreshAll}
+                  disabled={disableControls || loading || batchLoading}
+                  title={t('quota_management.refresh_all_credentials')}
+                  aria-label={t('quota_management.refresh_all_credentials')}
+                >
+                  <IconRefreshCw size={16} />
+                </button>
+                {Object.values(tabCounts).filter((count) => count > 0).length > 2 && (
+                  <Select
+                    value={tab}
+                    onChange={handleTabChange}
+                    size="sm"
+                    ariaLabel={t('quota_ledger.provider')}
+                    options={TAB_IDS.map((id) => ({
+                      value: id,
+                      label: id === 'all' ? t('auth_files.filter_all') : id,
+                    }))}
+                  />
+                )}
+              </>
+            )}
             <Select
-              value={sortMode}
-              options={sortOptions}
-              onChange={handleSortModeChange}
-              ariaLabel={t('quota_management.sort_label')}
+              value={view}
+              fullWidth={false}
+              className={styles.viewSelect}
+              onChange={(value) => setView(value as QuotaView)}
               size="sm"
+              ariaLabel={t('quota_ledger.view')}
+              options={[
+                { value: 'ledger', label: t('quota_ledger.ledger') },
+                { value: 'classic', label: t('quota_ledger.classic') },
+              ]}
             />
+            <div className={styles.sort}>
+              <Select
+                value={sortMode}
+                options={sortOptions}
+                onChange={handleSortModeChange}
+                ariaLabel={t('quota_management.sort_label')}
+                size="sm"
+              />
+            </div>
           </div>
         </div>
 
@@ -423,6 +498,17 @@ export function QuotaPage() {
                 </Button>
               )
             }
+          />
+        ) : view === 'ledger' ? (
+          <QuotaLedger
+            entries={pageItems}
+            quotaFor={getQuota}
+            resolvedTheme={resolvedTheme}
+            disabled={!canUseActions}
+            refreshing={batchLoading}
+            resettingName={resettingQuotaName}
+            onRefresh={(entry) => void refreshQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
+            onReset={(entry) => resetQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
           />
         ) : (
           <div className={styles.grid}>
@@ -474,7 +560,7 @@ export function QuotaPage() {
         <QuotaTimeline
           entries={pageItems}
           quotaFor={getQuota}
-          displayNameFor={displayNameFor}
+          displayNameFor={view === 'ledger' ? ledgerDisplayNameFor : displayNameFor}
           resolvedTheme={resolvedTheme}
         />
       </section>

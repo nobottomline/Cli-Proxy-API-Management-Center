@@ -1,3 +1,4 @@
+import { WindowStartButton } from '@/features/windowStart/WindowStart';
 /**
  * Provider quota card: identity, loading/error state, quota body, and actions.
  * Claude observations remain visible while refreshing or after a failed read.
@@ -134,6 +135,9 @@ export function QuotaCard(props: QuotaCardProps) {
         <span className={styles.fileName} title={displayName}>
           {displayName}
         </span>
+        {entry.type === 'claude' && (
+          <WindowStartButton index={file.authIndex} disabled={!canRefresh || !!file.disabled} />
+        )}
       </header>
 
       <div className={styles.body}>

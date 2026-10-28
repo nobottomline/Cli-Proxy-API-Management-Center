@@ -1016,3 +1016,9 @@
     }
   }
 }
+
+// The dense quota ledger has no decorative header wash. Other routes and the
+// classic quota surface retain their original shell and sidebar preferences.
+.quota-ledger-shell .top-gradient-blur {
+  display: none;
+}

@@ -1,3 +1,4 @@
+import { WindowStartButton } from '@/features/windowStart/WindowStart';
 import { useState, type CSSProperties } from 'react';
 import { getAuthFileRefreshKey } from '@/features/authFiles/manualRefresh';
 import { useTranslation } from 'react-i18next';
@@ -282,6 +283,9 @@ export function AuthFileCard(props: AuthFileCardProps) {
           )}
           {!isRuntimeOnly && (
             <div className={styles.utilityActions}>
+              {providerKey === 'claude' && (
+                <WindowStartButton index={file.authIndex} disabled={disableControls || !!file.disabled} />
+              )}
               {showManualRefreshButton && (
                 <Button
                   variant="secondary"

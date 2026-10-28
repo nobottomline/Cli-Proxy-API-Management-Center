@@ -1,3 +1,4 @@
+import { useQuotaView } from '@/features/quota/viewPreference';
 import {
   ReactNode,
   RefObject,
@@ -326,7 +327,17 @@ export function MainLayout() {
   const setLanguage = useLanguageStore((state) => state.setLanguage);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [standardSidebarCollapsed, setStandardSidebarCollapsed] = useState(false);
+  const [ledgerSidebarCollapsed, setLedgerSidebarCollapsed] = useState(true);
+  const quotaView = useQuotaView((state) => state.view);
+  const isLedgerPage = location.pathname === '/quota' && quotaView === 'ledger';
+  const sidebarCollapsed = isLedgerPage ? ledgerSidebarCollapsed : standardSidebarCollapsed;
+  const setSidebarCollapsed = useCallback(
+    (update: boolean | ((previous: boolean) => boolean)) => {
+      (isLedgerPage ? setLedgerSidebarCollapsed : setStandardSidebarCollapsed)(update);
+    },
+    [isLedgerPage]
+  );
   const [authFilesCount, setAuthFilesCount] = useState<number | null>(null);
   const [railTooltip, setRailTooltip] = useState<{
     targetID: string;
@@ -836,7 +847,7 @@ export function MainLayout() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [hideRailTooltip]);
+  }, [hideRailTooltip, setSidebarCollapsed]);
 
   const renderNavBadge = (badge?: number, badgeLabel?: string) =>
     typeof badge === 'number' ? (
@@ -973,7 +984,7 @@ export function MainLayout() {
   return (
     <div
       className={`app-shell ${sidebarCollapsed ? 'sidebar-is-collapsed' : ''} ${
-        isPluginResourcePage ? 'plugin-resource-shell' : ''
+        isPluginResourcePage ? 'plugin-resource-shell' : isLedgerPage ? 'quota-ledger-shell' : ''
       }`}
     >
       <div className="top-gradient-blur" aria-hidden="true" />

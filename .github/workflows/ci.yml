@@ -2,10 +2,15 @@ name: CI
 
 on:
   pull_request:
+  workflow_dispatch:
   push:
     branches:
       - main
       - dev
+      - stable
+
+permissions:
+  contents: read
 
 jobs:
   verify:
@@ -30,3 +35,6 @@ jobs:
 
       - name: Verify
         run: bun run verify
+
+      - name: Verify optional window starter
+        run: python3 -m unittest discover -s extensions/window-start -p "test_*.py"

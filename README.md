@@ -1,3 +1,77 @@
+# Ledger quota fork
+
+A focused fork of [CLI Proxy API Management Center](https://github.com/router-for-me/Cli-Proxy-API-Management-Center), based on **v1.26.7** and compatible with the existing v8 management API.
+
+**Ledger is the default quota view.** It places account identity, weekly/session/Fable
+allowances and safe refresh/reset actions in aligned rows, followed by the quota
+window timeline. Choose **Cards** in the view selector to restore the original
+quota layout. The choice persists locally; other management pages retain their
+existing design. Both views follow the selected light/dark theme.
+
+- Percentages are remaining allowance. Unknown provider data stays unknown.
+- **Refresh quota** reads current provider usage; it never spends a reset grant.
+- **Reset limits** uses the existing grant flow and requires confirmation.
+- The small session-window play controls are a separate optional extension.
+- No provider tokens, account data, management keys or private SSH configuration
+  are included in the repository or build.
+
+The maintained branch is **stable**. `main` retains the upstream fork baseline.
+
+![Ledger quota view with fictional demo accounts](docs/screenshots/ledger-desktop.png)
+
+*Isolated demo with fictional accounts. [Mobile](docs/screenshots/ledger-mobile.png) · [Original Cards view](docs/screenshots/cards-desktop.png).*
+
+## Build and update
+
+```sh
+git clone --branch stable https://github.com/nobottomline/Cli-Proxy-API-Management-Center.git
+cd Cli-Proxy-API-Management-Center
+bun install --frozen-lockfile
+bun run verify
+```
+
+The result is `dist/index.html`, a self-contained management panel. Release tags
+publish it as `management.html`; download it from this fork's
+[Releases](https://github.com/nobottomline/Cli-Proxy-API-Management-Center/releases).
+
+For a previously configured private Linux deployment with an existing trusted SSH
+alias and the standard `/etc/cliproxyapi/static/management.html` location:
+
+```sh
+python3 scripts/deploy-panel.py --ssh-host YOUR_EXISTING_SSH_ALIAS
+```
+
+This performs a root-only backup and atomic replacement of the HTML, verifies the
+served SHA-256, and leaves gateway configuration, credentials, routing and service
+processes untouched. It uses your existing SSH configuration; no key belongs here.
+For another installation layout, deploy the built HTML using that backend's
+normal static-panel mechanism instead.
+
+From another project, clone/pull **this repository's stable branch**, make the
+change in `src/`, verify, commit/push, and build/deploy from this repository. Do not
+edit generated HTML or the old local patch-template directory. See
+[architecture and verification](docs/LEDGER.md).
+
+## Isolated preview
+
+```sh
+bun run build
+python3 scripts/demo-server.py --port 18327
+```
+
+Open `http://127.0.0.1:18327/management.html#/quota` and use the explicitly
+synthetic key `demo-management-key`. The fixture serves six fictional accounts,
+never contacts a provider, and refuses mutations. It is for UI verification only.
+
+The optional window starter is documented in
+[extensions/window-start](extensions/window-start/README.md). Build with
+`VITE_SESSION_WINDOW_CONTROLS=false bun run build` if your backend does not have
+that separate service.
+
+---
+
+## Upstream documentation
+
 <div align="center">
 
 <img src="./logo.jpg" alt="CLI Proxy API" width="144">

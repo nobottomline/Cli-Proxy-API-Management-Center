@@ -75,7 +75,7 @@ export function filterEntriesBySearch(entries: QuotaFileEntry[], search: string)
   const query = search.trim().toLowerCase();
   if (!query) return entries;
   return entries.filter(({ file }) =>
-    [file.name, file.email].some(
+    [file.name, file.email, file.label].some(
       (value) => typeof value === 'string' && value.toLowerCase().includes(query)
     )
   );

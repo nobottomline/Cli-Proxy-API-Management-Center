@@ -549,7 +549,6 @@
     "reset_confirm_button": "确认重置",
     "reset_not_confirmed": "未确认额度重置成功，请刷新额度后再决定是否重试。",
     "reset_cooldown_failed": "额度已重置，但代理冷却清除失败。请在原连接的认证文件页面使用“清除冷却”，不要再次消耗重置卡。",
-
     "reset_success": "已重置 \"{{name}}\" 的 Codex 额度",
     "reset_failed": "重置 \"{{name}}\" 的 Codex 额度失败：{{message}}",
     "plan_plus": "Plus",
@@ -2309,5 +2308,53 @@
     "error": "绑定失败，请重新开始。",
     "unsupported": "当前后端不支持 SIWC 绑定。",
     "expired": "绑定会话已过期，请重新开始。"
+  },
+  "window_start": {
+    "title": "Claude session windows",
+    "complete": "Window check complete. Hover each account’s play/check icon for its result.",
+    "all": "Start windows",
+    "one": "Start account window",
+    "running": "Checking accounts…",
+    "hint": "Manual only. Active windows and exhausted limits are skipped. At most one tiny message per eligible account; routing order stays unchanged.",
+    "reset": "Resets",
+    "tokens": "{{input}} input / {{output}} output tokens",
+    "error": "Window service unavailable. No automatic retry.",
+    "refresh": "Check connection",
+    "states": {
+      "queued": "Queued",
+      "checking": "Checking limits",
+      "sending": "Sending one message",
+      "confirming": "Confirming window",
+      "active": "Window already active; no message sent",
+      "started": "Window start confirmed",
+      "skipped": "Skipped: disabled, exhausted or repeat protection",
+      "error": "Request/check failed; no automatic retry",
+      "unconfirmed": "Reply received; window start unconfirmed",
+      "interrupted": "Check interrupted; no automatic retry"
+    }
+  },
+  "quota_ledger": {
+    "view": "Quota view",
+    "ledger": "Ledger",
+    "classic": "Cards",
+    "provider": "Provider",
+    "credentials_one": "{{count}} credential",
+    "credentials_other": "{{count}} credentials",
+    "show": "Show",
+    "hide": "Hide",
+    "aggregate_hint": "Sum of each account’s remaining percentage. Different subscriptions do not share a token budget.",
+    "back": "back {{time}}",
+    "last_checked": "Last checked {{time}}",
+    "not_checked": "Not checked yet",
+    "loading": "Loading…",
+    "stale": "Refresh failed · showing last observation",
+    "load_failed": "Could not load quota · refresh to retry",
+    "resets_remaining": "Resets remaining:",
+    "reset_limits": "Reset limits",
+    "refresh_quota": "Refresh quota",
+    "more_details": "Details",
+    "no_reset": "No reset pending",
+    "not_reported": "Not reported",
+    "unknown": "Unknown remaining allowance"
   }
 }
