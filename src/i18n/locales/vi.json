@@ -523,8 +523,8 @@
     "plan_free": "Miễn phí",
     "plan_pro": "Pro",
     "plan_max": "Max",
-    "plan_max5": "Max 5x",
-    "plan_max20": "Max 20x",
+    "plan_max5": "Max",
+    "plan_max20": "Ultra",
     "plan_team": "Team"
   },
   "codex_quota": {
@@ -1540,7 +1540,7 @@
     "description": "Theo dõi trạng thái quota OAuth của credential Antigravity, Codex, Claude, Kimi và xAI.",
     "refresh_all_credentials": "Làm mới mọi credential",
     "sort_label": "Sắp xếp",
-    "sort_default": "Mặc định",
+    "sort_default": "Gói: cao nhất trước",
     "sort_soonest": "Sớm khôi phục nhất",
     "meta_credentials": "{{count}} credential",
     "meta_loaded": "{{count}} đã tải",
@@ -1580,7 +1580,9 @@
     "search_placeholder": "Tìm theo tên file hoặc email",
     "search_empty_title": "Không có tài khoản phù hợp",
     "search_empty_desc": "Hãy thử tên file hoặc email khác, hoặc xóa tìm kiếm.",
-    "search_clear": "Xóa tìm kiếm"
+    "search_clear": "Xóa tìm kiếm",
+    "hide_emails": "Ẩn email",
+    "email_hidden": "Email đã ẩn"
   },
   "plugin_management": {
     "title": "Quản lý Plugin",
@@ -2348,9 +2350,6 @@
     "provider": "Provider",
     "credentials_one": "{{count}} credential",
     "credentials_other": "{{count}} credentials",
-    "show": "Show",
-    "hide": "Hide",
-    "aggregate_hint": "Sum of each account’s remaining percentage. Different subscriptions do not share a token budget.",
     "back": "back {{time}}",
     "last_checked": "Last checked {{time}}",
     "not_checked": "Not checked yet",

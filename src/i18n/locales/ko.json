@@ -523,8 +523,8 @@
     "plan_free": "Free",
     "plan_pro": "Pro",
     "plan_max": "Max",
-    "plan_max5": "Max 5x",
-    "plan_max20": "Max 20x",
+    "plan_max5": "Max",
+    "plan_max20": "Ultra",
     "plan_team": "Team"
   },
   "codex_quota": {
@@ -1589,7 +1589,7 @@
     "description": "Antigravity, Codex, Claude, Kimi 및 xAI 자격 증명의 OAuth 할당량 상태를 모니터링합니다.",
     "refresh_all_credentials": "모든 자격 증명 새로 고침",
     "sort_label": "정렬",
-    "sort_default": "기본값",
+    "sort_default": "요금제: 높은 순",
     "sort_soonest": "가장 빠른 복구순",
     "meta_credentials": "자격 증명 {{count}}개",
     "meta_loaded": "{{count}}개 로드됨",
@@ -1624,7 +1624,9 @@
     "weekday_wed": "수",
     "weekday_thu": "목",
     "weekday_fri": "금",
-    "weekday_sat": "토"
+    "weekday_sat": "토",
+    "hide_emails": "이메일 숨기기",
+    "email_hidden": "이메일 숨김"
   },
   "plugin_management": {
     "title": "플러그인 관리",
@@ -2342,9 +2344,6 @@
     "provider": "Provider",
     "credentials_one": "{{count}} credential",
     "credentials_other": "{{count}} credentials",
-    "show": "Show",
-    "hide": "Hide",
-    "aggregate_hint": "Sum of each account’s remaining percentage. Different subscriptions do not share a token budget.",
     "back": "back {{time}}",
     "last_checked": "Last checked {{time}}",
     "not_checked": "Not checked yet",

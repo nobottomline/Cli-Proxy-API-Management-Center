@@ -18,8 +18,7 @@ and merged explicitly.
 
 - `viewPreference.ts`: validated, persistent Ledger/Cards preference; defaults to
   Ledger, remains usable without browser storage, and contains no account data.
-- `ledgerModel.ts`: remaining percentages, public identity, honest partial
-  aggregates and the latest recovery among exhausted shared pools.
+- `ledgerModel.ts`: remaining percentages, public identity and the latest recovery among exhausted shared pools.
 - `QuotaLedger.tsx`: provider summaries and Claude rows, with existing cards as a
   complete fallback for other providers. Unreported Fable allowance remains `--`.
 - `QuotaPage.tsx`: retains filtering, sorting, pagination, connection generations,
@@ -29,8 +28,12 @@ and merged explicitly.
 - `MainLayout.tsx`: Ledger has its own collapsed-sidebar state. Switching to Cards
   or another route restores the independent existing sidebar state.
 
-The provider summary adds account percentages, not tokens or pooled subscription
-capacity. The hint explains that different plans do not share a budget. Identity
+The provider summary contains only the provider and credential count; Fable
+allowances remain per account. Default sorting uses reported subscriptions in
+descending order: Ultra, Max, Pro, then other or unknown plans. A persistent
+Hide emails switch masks account identities in both views, timeline tooltips and
+action messages. The placeholder shimmers briefly and respects reduced motion.
+No hidden email is rendered into text, titles or accessible names. Identity
 uses the public label/email/filename; `account` and `account_type` are never used
 for display because those fields can contain API credentials.
 
@@ -42,17 +45,20 @@ hook, journal, ambiguity handling and confirmation. The optional session-window
 control uses its existing private loopback helper. A view switch never performs
 inference, spends a reset or changes routing.
 
+See [upstream maintenance notes](UPSTREAM.md) for backported fixes and current
+Claude subscription terminology.
+
 ## Verification
 
-Pure regressions cover unknown/clamped remaining allowance, partial aggregates,
-shared-pool recovery, safe identity and storage failure. Rendering regressions
+Pure regressions cover unknown/clamped remaining allowance, subscription ordering,
+shared-pool recovery, private identity and storage failure. Rendering regressions
 cover missing Fable data, errors and duplicate-read blocking. The full existing
 Bun suite, lint, typecheck and single-file build remain required. Optional helper
 Python regressions use synthetic credentials and never call a provider.
 
 `scripts/demo-server.py` provides synthetic account, quota/profile and reset-grant
 observations to the compiled UI. The browser can exercise refresh, search, view
-persistence, summary/details and timeline controls with no external requests.
+and privacy persistence, per-account details and timeline controls with no external requests.
 The fixture records reads in `/fixture-counts` and refuses all provider mutations.
 Do not substitute real accounts or credentials into published test fixtures or
 screenshots. Production verification must be limited to authenticated read-only

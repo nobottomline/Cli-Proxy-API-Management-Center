@@ -523,8 +523,8 @@
     "plan_free": "Free",
     "plan_pro": "Pro",
     "plan_max": "Max",
-    "plan_max5": "Max 5x",
-    "plan_max20": "Max 20x",
+    "plan_max5": "Max",
+    "plan_max20": "Ultra",
     "plan_team": "Team"
   },
   "codex_quota": {
@@ -1589,7 +1589,7 @@
     "description": "Monitor OAuth quota status for Antigravity, Codex, Claude, Kimi, and xAI credentials.",
     "refresh_all_credentials": "Refresh all credentials",
     "sort_label": "Sort",
-    "sort_default": "Default",
+    "sort_default": "Subscription: highest first",
     "sort_soonest": "Soonest recovery",
     "meta_credentials": "{{count}} credentials",
     "meta_loaded": "{{count}} loaded",
@@ -1624,7 +1624,9 @@
     "weekday_wed": "Wed",
     "weekday_thu": "Thu",
     "weekday_fri": "Fri",
-    "weekday_sat": "Sat"
+    "weekday_sat": "Sat",
+    "hide_emails": "Hide emails",
+    "email_hidden": "Email hidden"
   },
   "plugin_management": {
     "title": "Plugin Management",
@@ -2342,9 +2344,6 @@
     "provider": "Provider",
     "credentials_one": "{{count}} credential",
     "credentials_other": "{{count}} credentials",
-    "show": "Show",
-    "hide": "Hide",
-    "aggregate_hint": "Sum of each account’s remaining percentage. Different subscriptions do not share a token budget.",
     "back": "back {{time}}",
     "last_checked": "Last checked {{time}}",
     "not_checked": "Not checked yet",

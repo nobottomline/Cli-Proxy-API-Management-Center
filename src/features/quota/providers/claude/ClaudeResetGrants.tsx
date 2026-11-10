@@ -25,7 +25,8 @@ export function useClaudeResetGrants(
   enabled: boolean,
   disabled: boolean,
   refreshToken: unknown,
-  onRefresh: () => void
+  onRefresh: () => void,
+  displayName = file.name
 ) {
   const { t } = useTranslation();
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
@@ -89,7 +90,7 @@ export function useClaudeResetGrants(
     showConfirmation({
       title: t('claude_reset.title'),
       message: t(pending ? 'claude_reset.retry_confirm' : 'claude_reset.confirm_text', {
-        name: file.name,
+        name: displayName,
       }),
       confirmText: t(pending ? 'claude_reset.retry' : 'claude_reset.confirm'),
       variant: 'primary',
@@ -102,7 +103,12 @@ export function useClaudeResetGrants(
           const answer = await resetGrantOperations.run(key, authIndex, selected);
           if (!current()) return;
           showNotification(
-            t(`claude_reset.${answer.unresolved ? 'unknown' : answer.code}`),
+            answer.code === 'cooldown_clear_failed'
+              ? t('auth_files.cooldown_reset_failed', {
+                  name: displayName,
+                  message: t('common.unknown_error'),
+                })
+              : t(`claude_reset.${answer.unresolved ? 'unknown' : answer.code}`),
             !answer.unresolved && (answer.code === 'reset' || answer.code === 'already_used')
               ? 'success'
               : 'error'

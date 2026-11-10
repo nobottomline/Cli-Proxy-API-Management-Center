@@ -1,0 +1,50 @@
+.mask {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  vertical-align: middle;
+  user-select: none;
+  border-radius: 4px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 20%, var(--bg-primary) 50%, transparent 80%);
+    transform: translateX(-100%);
+    animation: privacy-shimmer 2.8s var(--ease-out-strong) 2;
+    pointer-events: none;
+  }
+}
+
+.placeholder {
+  display: inline-block;
+  padding-inline: 3px;
+  filter: blur(4px);
+  opacity: 0.65;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes privacy-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mask::after {
+    animation: none;
+    display: none;
+  }
+}

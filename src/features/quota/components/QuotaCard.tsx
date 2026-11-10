@@ -1,3 +1,4 @@
+import { QuotaIdentity } from './QuotaIdentity';
 import { WindowStartButton } from '@/features/windowStart/WindowStart';
 /**
  * Provider quota card: identity, loading/error state, quota body, and actions.
@@ -30,6 +31,7 @@ const quotaClasses = bindQuotaClasses(bodyStyles, 'QuotaBody.module.scss');
 
 export type QuotaCardProps = {
   entry: QuotaFileEntry;
+  hideEmails?: boolean;
   quota?: QuotaCardState;
   resolvedTheme: ResolvedTheme;
   canRefresh: boolean;
@@ -44,6 +46,7 @@ export function QuotaCard(props: QuotaCardProps) {
   const {
     entry,
     quota,
+    hideEmails = false,
     resolvedTheme,
     canRefresh,
     resetting,
@@ -56,7 +59,7 @@ export function QuotaCard(props: QuotaCardProps) {
   const file = entry.file;
   const retainedClaudeUsage =
     entry.type === 'claude' && hasClaudeUsageData(quota as ClaudeQuotaState | undefined);
-  const displayName = getQuotaDisplayName(file);
+  const displayName = hideEmails ? t('quota_management.email_hidden') : getQuotaDisplayName(file);
 
   // Capture the entrance delay only at mount, without a render-time ref read.
   const [mountEntranceDelayMs] = useState<number | null>(entranceDelayMs ?? null);
@@ -72,7 +75,8 @@ export function QuotaCard(props: QuotaCardProps) {
     entry.type === 'claude' && status !== 'idle',
     !canRefresh || loading || resetting,
     quota,
-    onRefresh
+    onRefresh,
+    displayName
   );
   const providerType =
     entry.type === 'plugin'
@@ -85,7 +89,7 @@ export function QuotaCard(props: QuotaCardProps) {
   const errorMessage = resolveQuotaErrorMessage(
     t,
     quota?.errorStatus,
-    quota?.error || t('common.unknown_error')
+    (!hideEmails && quota?.error) || t('common.unknown_error')
   );
   // Claude banked resets join the plan chip row; their expiry list follows it.
   const showClaudeReset = entry.type === 'claude' && status === 'success';
@@ -132,9 +136,7 @@ export function QuotaCard(props: QuotaCardProps) {
             <span className={styles.iconFallback}>{typeLabel.slice(0, 1).toUpperCase()}</span>
           )}
         </span>
-        <span className={styles.fileName} title={displayName}>
-          {displayName}
-        </span>
+        <QuotaIdentity className={styles.fileName} name={displayName} hidden={hideEmails} />
         {entry.type === 'claude' && (
           <WindowStartButton index={file.authIndex} disabled={!canRefresh || !!file.disabled} />
         )}

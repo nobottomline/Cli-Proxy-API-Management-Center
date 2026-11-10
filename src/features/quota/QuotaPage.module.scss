@@ -246,6 +246,21 @@
   gap: 12px;
   flex-wrap: wrap;
 }
+.privacyToggle {
+  min-height: 36px;
+  color: var(--text-secondary);
+
+  > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  &[aria-pressed='true'] {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+  }
+}
 .ledgerRefresh {
   display: inline-flex;
   align-items: center;

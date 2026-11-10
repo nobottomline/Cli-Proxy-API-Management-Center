@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IconRefreshCw } from '@/components/ui/icons';
 import type { ClaudeQuotaState, ClaudeQuotaWindow, ResolvedTheme } from '@/types';
@@ -8,13 +7,13 @@ import { WindowStartButton } from '@/features/windowStart/WindowStart';
 import { formatRelativeInstant, formatInstantShort } from '@/utils/quota';
 import { getQuotaCacheKey } from '@/utils/quota/identity';
 import {
-  aggregateRemaining,
   ledgerIdentity,
   LEDGER_COLUMNS,
   remainingPercent,
   sharedBlockedUntil,
 } from '../ledgerModel';
 import { QuotaCard } from './QuotaCard';
+import { QuotaIdentity } from './QuotaIdentity';
 import type { QuotaFileEntry } from '../logic';
 import { type QuotaCardState } from '../providers';
 import { useClaudeResetGrants } from '../providers/claude/ClaudeResetGrants';
@@ -28,6 +27,7 @@ const bodyClasses = bindQuotaClasses(bodyStyles, 'QuotaBody.module.scss');
 
 export interface QuotaLedgerProps {
   entries: QuotaFileEntry[];
+  hideEmails?: boolean;
   quotaFor: (entry: QuotaFileEntry) => QuotaCardState | undefined;
   resolvedTheme: ResolvedTheme;
   disabled: boolean;
@@ -47,17 +47,14 @@ export function QuotaLedger(props: QuotaLedgerProps) {
     <div className={styles.ledger}>
       {Array.from(groups, ([type, entries]) => (
         <section key={type} aria-label={getTypeLabel(t, type)} className={styles.group}>
-          <ProviderSummary
-            entries={entries}
-            quotaFor={props.quotaFor}
-            resolvedTheme={props.resolvedTheme}
-          />
+          <ProviderSummary entries={entries} resolvedTheme={props.resolvedTheme} />
           {entries.map((entry) =>
             entry.type === 'claude' ? (
               <ClaudeLedgerRow
                 key={getQuotaCacheKey(entry.file)}
                 entry={entry}
                 quota={props.quotaFor(entry) as ClaudeQuotaState | undefined}
+                hideEmails={props.hideEmails}
                 disabled={props.disabled || !!entry.file.disabled}
                 refreshing={props.refreshing}
                 onRefresh={() => props.onRefresh(entry)}
@@ -68,6 +65,7 @@ export function QuotaLedger(props: QuotaLedgerProps) {
                 key={`${entry.type}:${getQuotaCacheKey(entry.file)}`}
                 entry={entry}
                 quota={props.quotaFor(entry)}
+                hideEmails={props.hideEmails}
                 resolvedTheme={props.resolvedTheme}
                 canRefresh={!props.disabled && !entry.file.disabled}
                 resetting={props.resettingName === getQuotaCacheKey(entry.file)}
@@ -84,65 +82,20 @@ export function QuotaLedger(props: QuotaLedgerProps) {
 
 function ProviderSummary({
   entries,
-  quotaFor,
   resolvedTheme,
-}: Pick<QuotaLedgerProps, 'entries' | 'quotaFor' | 'resolvedTheme'>) {
+}: Pick<QuotaLedgerProps, 'entries' | 'resolvedTheme'>) {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState(false);
   const type = entries[0].type;
-  const label = getTypeLabel(t, type);
   const icon = getAuthFileIcon(type, resolvedTheme);
-  const aggregate = aggregateRemaining(
-    type === 'claude'
-      ? entries.map((entry) => quotaFor(entry) as ClaudeQuotaState | undefined)
-      : [],
-    'seven-day-fable'
-  );
   return (
     <div className={styles.summary}>
       <div className={styles.summaryHead}>
         <span className={styles.provider}>
           {icon && <img src={icon} alt="" />}
-          <strong>{label}</strong>
+          <strong>{getTypeLabel(t, type)}</strong>
         </span>
         <span>{t('quota_ledger.credentials', { count: entries.length })}</span>
       </div>
-      {type === 'claude' && (
-        <>
-          <div className={styles.summaryTotal}>
-            <span title={t('quota_ledger.aggregate_hint')}>
-              {t('claude_quota.seven_day_fable')}{' '}
-              <strong>{aggregate.value === null ? '--' : `${Math.round(aggregate.value)}%`}</strong>
-              {aggregate.known > 0 && aggregate.known < aggregate.total && (
-                <small>
-                  {' '}
-                  · {aggregate.known}/{aggregate.total}
-                </small>
-              )}
-            </span>
-            <button type="button" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
-              {t(expanded ? 'quota_ledger.hide' : 'quota_ledger.show')}
-            </button>
-          </div>
-          {expanded && (
-            <div className={styles.summaryDetails}>
-              <p>{t('quota_ledger.aggregate_hint')}</p>
-              {entries.map((entry) => {
-                const quota = quotaFor(entry) as ClaudeQuotaState | undefined;
-                const percent = remainingPercent(
-                  quota?.windows.find((window) => window.id === 'seven-day-fable')
-                );
-                return (
-                  <div key={getQuotaCacheKey(entry.file)}>
-                    <span>{ledgerIdentity(entry.file)}</span>
-                    <span>{percent === null ? '--' : `${Math.round(percent)}%`}</span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </>
-      )}
     </div>
   );
 }
@@ -150,6 +103,7 @@ function ProviderSummary({
 function ClaudeLedgerRow({
   entry,
   quota,
+  hideEmails = false,
   disabled,
   refreshing,
   onRefresh,
@@ -157,6 +111,7 @@ function ClaudeLedgerRow({
 }: {
   entry: QuotaFileEntry;
   quota?: ClaudeQuotaState;
+  hideEmails?: boolean;
   disabled: boolean;
   refreshing: boolean;
   onRefresh: () => void;
@@ -165,13 +120,14 @@ function ClaudeLedgerRow({
   const { t, i18n } = useTranslation();
   const now = useNow();
   const loading = quota?.status === 'loading';
-  const name = ledgerIdentity(entry.file);
+  const name = hideEmails ? t('quota_management.email_hidden') : ledgerIdentity(entry.file);
   const reset = useClaudeResetGrants(
     entry.file,
     quota?.status === 'success',
     disabled || loading || refreshing,
     quota,
-    onRefresh
+    onRefresh,
+    name
   );
   const blockedUntil = sharedBlockedUntil(quota, now);
   const failed = quota?.status === 'error' || quota?.stale;
@@ -186,10 +142,10 @@ function ClaudeLedgerRow({
       <div className={styles.identity}>
         <h2>
           {icon && <img src={icon} alt="" />}
-          <span title={name}>{name}</span>
+          <QuotaIdentity name={name} hidden={hideEmails} />
         </h2>
         <div className={styles.status}>
-          <span>Claude</span>
+          <span>Claude{quota?.planType ? ` · ${t(`claude_quota.${quota.planType}`)}` : ''}</span>
           {blockedUntil && (
             <span className={styles.back}>
               {' '}
@@ -213,7 +169,11 @@ function ClaudeLedgerRow({
             : t(loading ? 'quota_ledger.loading' : 'quota_ledger.not_checked')}
         </div>
         {failed && (
-          <span className={styles.error} role="status" title={quota?.error}>
+          <span
+            className={styles.error}
+            role="status"
+            title={hideEmails ? undefined : quota?.error}
+          >
             {t(quota?.stale ? 'quota_ledger.stale' : 'quota_ledger.load_failed')}
           </span>
         )}

@@ -29,16 +29,3 @@ export function sharedBlockedUntil(
   const last = Math.max(...(resets as number[]));
   return last > now ? last : null;
 }
-
-/** Account-percent sum, never a claim that different subscriptions share a budget. */
-export function aggregateRemaining(quotas: (ClaudeQuotaState | undefined)[], id: string) {
-  const values = quotas.map((quota) =>
-    remainingPercent(quota?.windows?.find((window) => window.id === id))
-  );
-  const known = values.filter((value): value is number => value !== null);
-  return {
-    value: known.length ? known.reduce((sum, value) => sum + value, 0) : null,
-    known: known.length,
-    total: quotas.length,
-  };
-}

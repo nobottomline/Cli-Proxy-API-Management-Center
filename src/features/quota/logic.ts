@@ -100,9 +100,15 @@ export function filterEntriesBySearch(entries: QuotaFileEntry[], search: string)
 export function sortQuotaEntries(
   entries: QuotaFileEntry[],
   mode: QuotaSortMode,
-  resolveNextRecoveryMs: (entry: QuotaFileEntry) => number | null
+  resolveNextRecoveryMs: (entry: QuotaFileEntry) => number | null,
+  resolveSubscriptionRank: (entry: QuotaFileEntry) => number = () => 0
 ): QuotaFileEntry[] {
-  if (mode !== 'soonest') return [...entries];
+  if (mode !== 'soonest') {
+    return entries
+      .map((entry, index) => ({ entry, index, rank: resolveSubscriptionRank(entry) }))
+      .sort((a, b) => b.rank - a.rank || a.index - b.index)
+      .map(({ entry }) => entry);
+  }
 
   // Decorate once — resolving pokes at provider-shaped state per entry.
   return entries

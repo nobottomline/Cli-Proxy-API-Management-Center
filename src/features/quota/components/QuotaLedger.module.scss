@@ -20,8 +20,7 @@
   font-size: 13px;
 }
 
-.summaryHead,
-.summaryTotal {
+.summaryHead {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -44,21 +43,6 @@
   }
 }
 
-.summaryTotal {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-color);
-  strong {
-    margin-left: 7px;
-    color: var(--text-primary);
-    font-variant-numeric: tabular-nums;
-  }
-  small {
-    font-size: inherit;
-  }
-}
-
-.summaryTotal button,
 .actionButtons > button {
   display: inline-flex;
   align-items: center;
@@ -83,24 +67,6 @@
     outline: 2px solid var(--text-primary);
     outline-offset: 5px;
     border-radius: 3px;
-  }
-}
-
-.summaryDetails {
-  padding-top: 10px;
-  p {
-    margin: 4px 0 12px;
-    max-width: 70ch;
-    font-size: 12px;
-  }
-  > div {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 4px 0;
-  }
-  span:first-child {
-    overflow-wrap: anywhere;
   }
 }
 

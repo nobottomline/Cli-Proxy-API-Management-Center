@@ -513,8 +513,8 @@
     "plan_free": "Free",
     "plan_pro": "Pro",
     "plan_max": "Max",
-    "plan_max5": "Max 5x",
-    "plan_max20": "Max 20x",
+    "plan_max5": "Max",
+    "plan_max20": "Ultra",
     "plan_team": "Team"
   },
   "codex_quota": {
@@ -1592,7 +1592,7 @@
     "description": "Следите за статусом квот OAuth для учётных данных Antigravity, Codex, Claude, Kimi и xAI.",
     "refresh_all_credentials": "Обновить все учётные данные",
     "sort_label": "Сортировка",
-    "sort_default": "По умолчанию",
+    "sort_default": "Тариф: сначала старшие",
     "sort_soonest": "Сначала ближайшее восстановление",
     "meta_credentials": "{{count}} учётных данных",
     "meta_loaded": "{{count}} загружено",
@@ -1627,7 +1627,9 @@
     "weekday_wed": "Ср",
     "weekday_thu": "Чт",
     "weekday_fri": "Пт",
-    "weekday_sat": "Сб"
+    "weekday_sat": "Сб",
+    "hide_emails": "Скрыть почты",
+    "email_hidden": "Почта скрыта"
   },
   "plugin_management": {
     "title": "Управление плагинами",
@@ -2338,9 +2340,6 @@
     "credentials_few": "{{count}} аккаунта",
     "credentials_many": "{{count}} аккаунтов",
     "credentials_other": "{{count}} аккаунта",
-    "show": "Показать",
-    "hide": "Скрыть",
-    "aggregate_hint": "Сумма оставшихся процентов каждого аккаунта. У разных подписок нет общего бюджета токенов.",
     "back": "доступен {{time}}",
     "last_checked": "Проверено {{time}}",
     "not_checked": "Ещё не проверено",

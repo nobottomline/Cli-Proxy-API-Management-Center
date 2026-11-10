@@ -85,3 +85,34 @@ describe('ledger quota rows', () => {
     expect(html).toMatch(/<button type="button" disabled="">[\s\S]*?Refresh quota/);
   });
 });
+
+test('hides account identities from row text, tooltips, and accessible names', () => {
+  const html = render({
+    hideEmails: true,
+    entries: [
+      {
+        type: 'claude',
+        file: {
+          name: 'personal@example.invalid.json',
+          email: 'personal@example.invalid',
+          type: 'claude',
+        },
+      },
+    ],
+  });
+  expect(html).not.toContain('personal@example.invalid');
+  expect(html).toContain('Email hidden');
+});
+
+test('keeps per-account Fable limits without an aggregate summary', () => {
+  const html = render({
+    quotaFor: () => ({
+      status: 'success',
+      windows: [{ id: 'seven-day-fable', label: 'Fable', usedPercent: 0, resetLabel: '' }],
+    }),
+  });
+  expect(html).toContain('7-day Fable 5');
+  expect(html).toContain('aria-valuenow="100"');
+  expect(html).not.toContain('Sum of each account');
+  expect(html).not.toContain('aria-expanded=');
+});

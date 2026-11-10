@@ -16,6 +16,7 @@ KEY = 'demo-management-key'
 COUNTS = collections.Counter()
 NOW = dt.datetime.now(dt.timezone.utc)
 NAMES = ['Studio', 'Research', 'Workbench', 'Review', 'Personal', 'Reserve']
+PLANS = ['pro', 'max5', 'max20', 'pro', 'max20', 'max5']
 PERCENTAGES = [(0, 0, 0), (100, 14, 0), (1, 3, 0), (0, 0, 0), (1, 2, 0), (0, 0, 0)]
 
 
@@ -24,7 +25,7 @@ def at(hours):
 
 
 def accounts():
-    return [{'name': 'demo-' + str(i) + '.json', 'label': name,
+    return [{'name': 'demo-' + str(i) + '.json', 'label': name.lower() + '@example.invalid',
              'type': 'claude', 'provider': 'claude', 'auth_index': 'demo-' + str(i),
              'email': name.lower() + '@example.invalid', 'disabled': False,
              'status': 'active', 'source': 'file', 'runtime_only': False,
@@ -121,9 +122,11 @@ class Handler(BaseHTTPRequestHandler):
                 'extra_usage': {'is_enabled': False}})
         elif '/api/oauth/profile' in url:
             COUNTS['profile_reads'] += 1
-            self.upstream(200, {'account': {'has_claude_pro': True, 'has_claude_max': False},
+            plan = PLANS[number % len(PLANS)]
+            self.upstream(200, {'account': {'has_claude_pro': plan == 'pro', 'has_claude_max': plan != 'pro'},
                                 'organization': {'uuid': '11111111-1111-4111-8111-111111111111',
-                                                 'subscription_status': 'active'}})
+                                                 'subscription_status': 'active',
+                                                 'rate_limit_tier': {'pro': 'default_claude_ai', 'max5': 'default_claude_max_5x', 'max20': 'default_claude_max_20x'}[plan]}})
         else:
             COUNTS['blocked_mutations_or_unknown'] += 1
             self.upstream(405, {'error': 'No outbound connections or mutations in this fixture'})

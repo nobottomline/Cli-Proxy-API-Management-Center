@@ -14,6 +14,7 @@ import {
 import type { AuthFileItem } from '@/types';
 import { getStatusFromError } from '@/utils/quota';
 import { getQuotaCacheKey } from '@/utils/quota/identity';
+import { useQuotaPrivacy } from '../privacyPreference';
 import { enrichQuotaInBackground } from '../quotaEnrichment';
 import { getQuotaMap, getQuotaSetter, type QuotaAdapter, type QuotaCardState } from '../providers';
 
@@ -22,6 +23,16 @@ const getQuotaState = (adapter: QuotaAdapter, file: AuthFileItem): QuotaCardStat
 
 export function useQuotaActions(disableControls: boolean) {
   const { t } = useTranslation();
+  const displayName = useCallback(
+    (file: AuthFileItem) =>
+      useQuotaPrivacy.getState().hideEmails ? t('quota_management.email_hidden') : file.name,
+    [t]
+  );
+  const publicMessage = useCallback(
+    (message: string) =>
+      useQuotaPrivacy.getState().hideEmails ? t('common.unknown_error') : message,
+    [t]
+  );
   const showNotification = useNotificationStore((state) => state.showNotification);
   const showConfirmation = useNotificationStore((state) => state.showConfirmation);
   const [resettingQuotaName, setResettingQuotaName] = useState<string | null>(null);
@@ -49,7 +60,10 @@ export function useQuotaActions(disableControls: boolean) {
             [cacheKey]: successState,
           }));
           void enrichQuotaInBackground(adapter, file, data, successState, t);
-          showNotification(t('auth_files.quota_refresh_success', { name: file.name }), 'success');
+          showNotification(
+            t('auth_files.quota_refresh_success', { name: displayName(file) }),
+            'success'
+          );
         });
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : t('common.unknown_error');
@@ -60,13 +74,16 @@ export function useQuotaActions(disableControls: boolean) {
             [cacheKey]: adapter.buildErrorState(message, status),
           }));
           showNotification(
-            t('auth_files.quota_refresh_failed', { name: file.name, message }),
+            t('auth_files.quota_refresh_failed', {
+              name: displayName(file),
+              message: publicMessage(message),
+            }),
             'error'
           );
         });
       }
     },
-    [disableControls, resettingQuotaName, showNotification, t]
+    [disableControls, resettingQuotaName, showNotification, displayName, publicMessage, t]
   );
 
   const resetQuota = useCallback(
@@ -80,7 +97,7 @@ export function useQuotaActions(disableControls: boolean) {
 
       showConfirmation({
         title: t('codex_quota.reset_confirm_title'),
-        message: t('codex_quota.reset_confirm_message', { name: file.name }),
+        message: t('codex_quota.reset_confirm_message', { name: displayName(file) }),
         confirmText: t('codex_quota.reset_confirm_button'),
         variant: 'primary',
         onConfirm: async () => {
@@ -94,13 +111,19 @@ export function useQuotaActions(disableControls: boolean) {
                 ...prev,
                 [cacheKey]: adapter.buildSuccessState(data),
               }));
-              showNotification(t('codex_quota.reset_success', { name: file.name }), 'success');
+              showNotification(
+                t('codex_quota.reset_success', { name: displayName(file) }),
+                'success'
+              );
             });
           } catch (err: unknown) {
             const message = err instanceof Error ? err.message : t('common.unknown_error');
             commitIfQuotaCacheCurrent(cacheGeneration, () => {
               showNotification(
-                t('codex_quota.reset_failed', { name: file.name, message }),
+                t('codex_quota.reset_failed', {
+                  name: displayName(file),
+                  message: publicMessage(message),
+                }),
                 'error'
               );
             });
@@ -110,7 +133,15 @@ export function useQuotaActions(disableControls: boolean) {
         },
       });
     },
-    [disableControls, resettingQuotaName, showConfirmation, showNotification, t]
+    [
+      disableControls,
+      resettingQuotaName,
+      showConfirmation,
+      showNotification,
+      displayName,
+      publicMessage,
+      t,
+    ]
   );
 
   return { resettingQuotaName, refreshQuota, resetQuota };

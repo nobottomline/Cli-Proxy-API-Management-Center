@@ -8,6 +8,11 @@ window timeline. Choose **Cards** in the view selector to restore the original
 quota layout. The choice persists locally; other management pages retain their
 existing design. Both views follow the selected light/dark theme.
 
+- Subscriptions sort highest first: **Ultra → Max → Pro**, using reported plan data.
+  Claude's legacy Max 20x identifier is displayed as Ultra; Max 5x as Max.
+- **Hide emails** persists locally and masks identities in both views and the
+  timeline. The placeholder shimmers briefly; reduced motion keeps it static.
+- Provider summaries show the credential count, without an aggregate Fable total.
 - Percentages are remaining allowance. Unknown provider data stays unknown.
 - **Refresh quota** reads current provider usage; it never spends a reset grant.
 - **Reset limits** uses the existing grant flow and requires confirmation.
@@ -51,6 +56,9 @@ From another project, clone/pull **this repository's stable branch**, make the
 change in `src/`, verify, commit/push, and build/deploy from this repository. Do not
 edit generated HTML or the old local patch-template directory. See
 [architecture and verification](docs/LEDGER.md).
+
+See [upstream maintenance notes](docs/UPSTREAM.md) for selected fixes and the
+one-time sign-in requirement after the storage format update.
 
 ## Isolated preview
 

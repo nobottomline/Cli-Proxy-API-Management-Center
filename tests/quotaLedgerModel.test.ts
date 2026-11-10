@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test';
 import {
-  aggregateRemaining,
   ledgerIdentity,
   remainingPercent,
   sharedBlockedUntil,
@@ -50,24 +49,6 @@ describe('ledger provider observations', () => {
     expect(sharedBlockedUntil(quota(window('seven-day-fable', 100, 9000)), 1000)).toBeNull();
     expect(sharedBlockedUntil(quota(window('seven-day', 100)), 1000)).toBeNull();
     expect(sharedBlockedUntil(state, 10000)).toBeNull();
-  });
-  test('aggregate distinguishes partial observations from a complete 600 percent sum', () => {
-    const full = quota(window('seven-day-fable', 0));
-    expect(aggregateRemaining(Array(6).fill(full), 'seven-day-fable')).toEqual({
-      value: 600,
-      known: 6,
-      total: 6,
-    });
-    expect(aggregateRemaining([full, undefined], 'seven-day-fable')).toEqual({
-      value: 100,
-      known: 1,
-      total: 2,
-    });
-    expect(aggregateRemaining([undefined], 'seven-day-fable')).toEqual({
-      value: null,
-      known: 0,
-      total: 1,
-    });
   });
   test('identity uses public labels or email and never account credentials', () => {
     expect(

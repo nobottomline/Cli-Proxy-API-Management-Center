@@ -1,4 +1,6 @@
 import { ledgerIdentity } from './ledgerModel';
+import { useQuotaPrivacy } from './privacyPreference';
+import { subscriptionRank } from './subscriptionOrder';
 import { QuotaLedger } from './components/QuotaLedger';
 import { useQuotaView, type QuotaView } from './viewPreference';
 import { WindowStartControls } from '@/features/windowStart/WindowStart';
@@ -17,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { authFilesApi } from '@/services/api';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { IconSearch, IconX, IconRefreshCw } from '@/components/ui/icons';
+import { IconSearch, IconX, IconRefreshCw, IconEye, IconEyeOff } from '@/components/ui/icons';
 import { Select } from '@/components/ui/Select';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
@@ -69,6 +71,7 @@ const displayNameFor = (name: string) => name;
 export function QuotaPage() {
   const { t } = useTranslation();
   const { view, setView } = useQuotaView();
+  const { hideEmails, setHideEmails } = useQuotaPrivacy();
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const resolvedTheme: ResolvedTheme = useThemeStore((state) => state.resolvedTheme);
 
@@ -192,10 +195,14 @@ export function QuotaPage() {
     (entry: QuotaFileEntry) => nextRecoveryMs(entry.type, getQuota(entry), sortNow),
     [getQuota, sortNow]
   );
-  // 排序在分页之前：否则「最快恢复」只在当前页内成立。
+  const resolveSubscriptionRank = useCallback(
+    (entry: QuotaFileEntry) => subscriptionRank(entry, getQuota(entry)),
+    [getQuota]
+  );
+  // Sort the complete result before pagination in either display mode.
   const sortedEntries = useMemo(
-    () => sortQuotaEntries(filteredEntries, sortMode, resolveNextRecovery),
-    [filteredEntries, sortMode, resolveNextRecovery]
+    () => sortQuotaEntries(filteredEntries, sortMode, resolveNextRecovery, resolveSubscriptionRank),
+    [filteredEntries, sortMode, resolveNextRecovery, resolveSubscriptionRank]
   );
 
   const { pageItems, currentPage, totalPages } = useMemo(
@@ -408,6 +415,23 @@ export function QuotaPage() {
             )}
           </div>
           <div className={styles.toolbarActions}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={styles.privacyToggle}
+              aria-pressed={hideEmails}
+              onClick={() => {
+                if (!hideEmails) handleSearchChange('');
+                setHideEmails(!hideEmails);
+              }}
+            >
+              {hideEmails ? (
+                <IconEyeOff size={16} aria-hidden="true" />
+              ) : (
+                <IconEye size={16} aria-hidden="true" />
+              )}
+              {t('quota_management.hide_emails')}
+            </Button>
             {view === 'ledger' && (
               <>
                 <WindowStartControls compact />
@@ -502,6 +526,7 @@ export function QuotaPage() {
         ) : view === 'ledger' ? (
           <QuotaLedger
             entries={pageItems}
+            hideEmails={hideEmails}
             quotaFor={getQuota}
             resolvedTheme={resolvedTheme}
             disabled={!canUseActions}
@@ -521,6 +546,7 @@ export function QuotaPage() {
                 canRefresh={canUseActions && !entry.file.disabled}
                 resetting={resettingQuotaName === getQuotaCacheKey(entry.file)}
                 entranceDelayMs={cardEntranceDelay(index)}
+                hideEmails={hideEmails}
                 onRefresh={() => void refreshQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
                 onReset={() => resetQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
               />
@@ -560,6 +586,7 @@ export function QuotaPage() {
         <QuotaTimeline
           entries={pageItems}
           quotaFor={getQuota}
+          hideEmails={hideEmails}
           displayNameFor={view === 'ledger' ? ledgerDisplayNameFor : displayNameFor}
           resolvedTheme={resolvedTheme}
         />
