@@ -29,3 +29,8 @@ render an unbounded session as a full percentage bar; absent/failed data is unkn
 Reset selection uses the shared confirmation modal, native radio choices and the
 existing palette. Each grant exposes type, remaining count, exact expiry and a
 relative countdown. No default grant selection; unavailable grants stay visible.
+
+The Ledger details disclosure opens beside its own ellipsis trigger, with an
+8px gap. Flip above when necessary, constrain it to viewport margins, and track
+scroll/resize. Keep it above floating page chrome but below confirmation modals.
+Escape closes and restores trigger focus; outside interaction closes it.

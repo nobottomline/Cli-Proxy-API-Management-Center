@@ -86,3 +86,20 @@ qualification is read-only and recorded separately from the public test fixture.
 The initial CI run exposed a pre-existing locale/order-sensitive cooldown test:
 English apostrophes in an HTML title must be compared after React attribute
 encoding. The assertion was corrected without changing runtime cooldown behavior.
+
+## Details disclosure positioning
+
+The ellipsis summary keeps native disclosure semantics. `QuotaDetails.tsx` portals
+the read-only panel outside the row and anchors it to the summary's viewport
+rectangle rather than the full account row. The panel aligns its trailing edge
+with the trigger, uses an 8px gap, clamps to 16px viewport margins, and flips above
+when there is more space. Its own content scrolls within the available height.
+Scroll, resize and content-size changes update positioning; moving the trigger
+out of view closes the panel. Pointer interaction outside closes it, and Escape
+returns keyboard focus to the summary. The panel sits above page navigation and
+below reset confirmation dialogs.
+
+Browser regression checks used synthetic accounts at 1440px, 900px and 390px
+widths: an 8px trigger gap, trailing-edge alignment on desktop, bottom-row upward
+placement, viewport containment, scroll tracking, keyboard toggling, Escape focus
+restoration and outside-click dismissal. No provider calls or resets were used.

@@ -14,6 +14,7 @@ import {
 } from '../ledgerModel';
 import { QuotaCard } from './QuotaCard';
 import { QuotaIdentity } from './QuotaIdentity';
+import { QuotaDetails } from './QuotaDetails';
 import type { QuotaFileEntry } from '../logic';
 import { type QuotaCardState } from '../providers';
 import { useClaudeResetGrants } from '../providers/claude/ClaudeResetGrants';
@@ -223,22 +224,10 @@ function ClaudeLedgerRow({
             disabled={disabled || loading || quota?.fiveHourLimit === 'uncapped'}
           />
           {quota?.windows.length ? (
-            <details className={styles.details}>
-              <summary
-                aria-label={t('quota_ledger.more_details')}
-                title={t('quota_ledger.more_details')}
-              >
-                <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
-                  <circle cx="3" cy="8" r="1.25" fill="currentColor" />
-                  <circle cx="8" cy="8" r="1.25" fill="currentColor" />
-                  <circle cx="13" cy="8" r="1.25" fill="currentColor" />
-                </svg>
-              </summary>
-              <div className={styles.detailsBody}>
-                <ClaudeQuotaBody quota={quota} classes={bodyClasses} />
-                <ClaudeResetGrantDetails grants={reset.grants} classes={bodyClasses} />
-              </div>
-            </details>
+            <QuotaDetails label={t('quota_ledger.more_details')}>
+              <ClaudeQuotaBody quota={quota} classes={bodyClasses} />
+              <ClaudeResetGrantDetails grants={reset.grants} classes={bodyClasses} />
+            </QuotaDetails>
           ) : null}
         </div>
       </div>
