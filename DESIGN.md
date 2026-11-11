@@ -22,3 +22,10 @@ quota action messages with a blurred placeholder and a brief shimmer. Reduced
 motion keeps the static mask. Never put a hidden address in text or tooltips.
 Retain safe confirmation for banked reset grants. Expose refresh, errors, stale
 observations, unknown Fable allowances and all additional quota data.
+
+Confirmed uncapped Ultra sessions retain their column with an infinity symbol,
+a dashed neutral track and "No 5-hour cap / Weekly limits still apply". Never
+render an unbounded session as a full percentage bar; absent/failed data is unknown.
+Reset selection uses the shared confirmation modal, native radio choices and the
+existing palette. Each grant exposes type, remaining count, exact expiry and a
+relative countdown. No default grant selection; unavailable grants stay visible.

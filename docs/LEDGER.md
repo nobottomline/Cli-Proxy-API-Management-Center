@@ -40,8 +40,9 @@ for display because those fields can contain API credentials.
 ## Actions
 
 Refresh quota delegates to the existing per-credential quota action and its cache
-and connection guards. Banked Reset limits delegates to the original reset-grant
-hook, journal, ambiguity handling and confirmation. The optional session-window
+and connection guards. Banked Reset limits opens the grant chooser and delegates to the reset-grant
+hook, journal, ambiguity handling and fresh preflight. Every grant shows its
+expiration and a live countdown; the chosen identity is never silently replaced. The optional session-window
 control uses its existing private loopback helper. A view switch never performs
 inference, spends a reset or changes routing.
 

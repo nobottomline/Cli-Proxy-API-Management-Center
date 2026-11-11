@@ -558,3 +558,16 @@ describe('Claude usage snapshot rendering and retention', () => {
     expect(useQuotaStore.getState().claudeQuota).toEqual({});
   });
 });
+
+test('Cards also display a confirmed uncapped session with infinity', () => {
+  const html = render({
+    status: 'success',
+    windows: [],
+    planType: 'plan_max20',
+    fiveHourLimit: 'uncapped',
+  });
+  expect(html).toContain('∞');
+  expect(html).toContain('No 5-hour cap');
+  expect(html).toContain('Weekly limits still apply');
+  expect(html).not.toContain('role="meter"');
+});

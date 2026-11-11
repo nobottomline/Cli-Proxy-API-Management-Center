@@ -525,7 +525,9 @@
     "plan_max": "Max",
     "plan_max5": "Max",
     "plan_max20": "Ultra",
-    "plan_team": "Team"
+    "plan_team": "Team",
+    "session_uncapped": "Không giới hạn 5 giờ",
+    "weekly_limits_apply": "Vẫn áp dụng giới hạn tuần"
   },
   "codex_quota": {
     "title": "Quota Codex",
@@ -2283,7 +2285,25 @@
     "ineligible": "Tài khoản này không đủ điều kiện.",
     "unavailable": "Tính năng đặt lại hiện không khả dụng.",
     "rate_limited": "Yêu cầu bị giới hạn tốc độ.",
-    "auth_error": "Ủy quyền đã bị từ chối."
+    "auth_error": "Ủy quyền đã bị từ chối.",
+    "kind_weekly": "Đặt lại hằng tuần",
+    "kind_session": "Đặt lại 5 giờ",
+    "kind_full": "Đặt lại toàn bộ",
+    "kind_fable": "Đặt lại Fable",
+    "kind_unknown": "Lượt đặt lại",
+    "selected_grant": "Lượt đã chọn: {{kind}} · {{label}}",
+    "redeem_grant": "Dùng {{kind}} · {{label}}",
+    "retry_grant": "Thử lại {{kind}} · {{label}}",
+    "no_usage": "Chưa có mức sử dụng Fable để đặt lại.",
+    "fable_hint": "Khôi phục hạn mức Fable và hoàn lại phần đã dùng vào hạn mức tuần. Mức sử dụng tuần khác không thay đổi.",
+    "exact_grant_hint": "Chỉ dùng đúng lượt đặt lại này.",
+    "choose_grant": "Chọn lượt đặt lại",
+    "no_grants": "Không có lượt đặt lại.",
+    "grant_expiry": "Hết hạn: {{date}}",
+    "grant_unavailable": "Hiện không khả dụng.",
+    "grant_countdown": "Hết hạn {{time}}",
+    "grant_starts": "Khả dụng {{time}}",
+    "grant_expired": "Đã hết hạn"
   },
   "siwc": {
     "title": "Liên kết SIWC",

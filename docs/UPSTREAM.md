@@ -55,3 +55,40 @@ privacy in Ledger/Cards/timeline and refresh notifications, local persistence
 after reload, remembered sign-in, keyboard toggling and reduced motion passed.
 The design detector reported no findings. Unsupported dashboard requests in the
 minimal fixture return 404; no live provider mutations were used for verification.
+
+## Ultra session limits and explicit reset selection
+
+The follow-up imports `d06a110`'s explicit reset chooser, grant type/Fable metadata,
+zero-usage handling, and the original-grant journal for uncertain outcomes. It
+keeps this fork's private identity labels and wires the dialog into Ledger as well
+as Cards. Grant rows add a shared-minute-clock countdown, an exact expiration date,
+and future availability; expiration sorting does not preselect or spend a grant.
+A confirmed claim rechecks eligibility against the provider and uses exactly the
+selected grant ID. Ambiguous claims retain their original grant and request ID.
+
+The current upstream still has no distinct uncapped Claude five-hour state. The
+fork classifies a session as uncapped only for a reported Ultra/Max-20x profile
+with explicit `five_hour: null`, valid weekly usage, and a valid `limits` array
+without a session limit. Missing, malformed or contradictory evidence does not
+produce infinity. A real session window always wins over the plan name. Existing
+snapshot retention preserves this observation during refresh/error states; stale
+observations keep their visible stale marker. Cards and Ledger use a shared
+uncapped display without percentage-meter semantics, and disable the individual
+session-start button for accounts that have no session window.
+
+Primary references:
+
+- [Claude: verified Ultra accounts have no five-hour limit](https://support.claude.com/en/articles/17728952-what-is-the-ultra-plan).
+- [First-hand usage payload and client behavior](https://github.com/akitaonrails/ai-usagebar/issues/566).
+- [Claude: limit reset types and expiration](https://support.claude.com/en/articles/17007452-what-is-a-limit-reset).
+
+Verification: 1,761 Bun tests, ESLint, TypeScript and the production build passed.
+Browser checks use synthetic capped/uncapped Ultra profiles and three grants,
+including a future unavailable grant. Ledger/Cards, mobile/desktop, privacy,
+countdowns, and keyboard selection were checked. A locally intercepted synthetic
+claim verified that opening/selecting never spends and confirmation sends only the
+chosen Fable grant, rather than the provider's recommended full reset. No real
+reset grants were consumed during testing.
+
+Synthetic previews: [uncapped session](screenshots/claude-uncapped.png) and
+[reset chooser](screenshots/claude-reset-chooser.png).

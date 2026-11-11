@@ -210,7 +210,10 @@ export interface ClaudeQuotaWindow {
   periodHours?: number | null;
 }
 
+export type ClaudeFiveHourLimit = 'limited' | 'uncapped' | 'unknown';
+
 export interface ClaudeQuotaState {
+  fiveHourLimit?: ClaudeFiveHourLimit;
   status: 'idle' | 'loading' | 'success' | 'error';
   windows: ClaudeQuotaWindow[];
   extraUsage?: ClaudeExtraUsage | null;

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import type { ClaudeQuotaState } from '@/types';
 import { buildResetDisplay, formatQuotaResetTime, resolveResetMs } from '@/utils/quota';
 import { useNow } from '@/hooks/useNow';
+import { ClaudeUncappedSession } from './ClaudeUncappedSession';
 import { QuotaMeter } from '../../components/QuotaMeter';
 import { QuotaResetLabel } from '../../components/QuotaResetLabel';
 import { collectQuotaRowInstants, pickUrgentRowId } from '../../resetSchedule';
@@ -71,6 +72,11 @@ export function ClaudeQuotaBody({
         </div>
       )}
       {afterPlan}
+      {quota.fiveHourLimit === 'uncapped' && (
+        <div className={classes.quotaRow}>
+          <ClaudeUncappedSession />
+        </div>
+      )}
       {/* Extra usage and dollar balances share the window-row anatomy:
           label + mono telemetry header, then one mono detail line. */}
       {extraUsage && (

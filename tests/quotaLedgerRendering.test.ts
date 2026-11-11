@@ -116,3 +116,19 @@ test('keeps per-account Fable limits without an aggregate summary', () => {
   expect(html).not.toContain('Sum of each account');
   expect(html).not.toContain('aria-expanded=');
 });
+
+test('uncapped session uses infinity with a weekly-limit explanation, never a fake full meter', () => {
+  const html = render({
+    quotaFor: () => ({
+      status: 'success',
+      windows: [],
+      planType: 'plan_max20',
+      fiveHourLimit: 'uncapped',
+    }),
+  });
+  expect(html).toContain('∞');
+  expect(html).toContain('No 5-hour cap');
+  expect(html).toContain('Weekly limits still apply');
+  expect((html.match(/role="meter"/g) ?? []).length).toBe(2);
+  expect(html).not.toContain('aria-valuenow="100"');
+});

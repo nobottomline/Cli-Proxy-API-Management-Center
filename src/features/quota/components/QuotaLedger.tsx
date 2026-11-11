@@ -18,6 +18,8 @@ import type { QuotaFileEntry } from '../logic';
 import { type QuotaCardState } from '../providers';
 import { useClaudeResetGrants } from '../providers/claude/ClaudeResetGrants';
 import { ClaudeQuotaBody } from '../providers/claude/ClaudeQuotaBody';
+import { ClaudeResetGrantDialog } from '../providers/claude/ClaudeResetGrantDialog';
+import { ClaudeUncappedSession } from '../providers/claude/ClaudeUncappedSession';
 import { ClaudeResetGrantDetails } from '../providers/claude/ClaudeResetGrantDetails';
 import { bindQuotaClasses } from '../types';
 import bodyStyles from './QuotaBody.module.scss';
@@ -179,15 +181,19 @@ function ClaudeLedgerRow({
         )}
       </div>
       <div className={styles.meters}>
-        {LEDGER_COLUMNS.map((id) => (
-          <LedgerMeter
-            key={id}
-            id={id}
-            window={quota?.windows.find((window) => window.id === id)}
-            now={now}
-            loading={loading}
-          />
-        ))}
+        {LEDGER_COLUMNS.map((id) =>
+          id === 'five-hour' && quota?.fiveHourLimit === 'uncapped' ? (
+            <ClaudeUncappedSession key={id} />
+          ) : (
+            <LedgerMeter
+              key={id}
+              id={id}
+              window={quota?.windows.find((window) => window.id === id)}
+              now={now}
+              loading={loading}
+            />
+          )
+        )}
       </div>
       <div className={styles.actions}>
         <div className={styles.resets}>
@@ -197,7 +203,8 @@ function ClaudeLedgerRow({
           <button
             type="button"
             disabled={reset.blocked || refreshing}
-            onClick={reset.confirm}
+            onClick={reset.openDialog}
+            aria-haspopup="dialog"
             title={
               reset.message
                 ? t(`claude_reset.${reset.message}`)
@@ -211,7 +218,10 @@ function ClaudeLedgerRow({
             <IconRefreshCw size={14} className={loading ? styles.spinning : undefined} />
             {t('quota_ledger.refresh_quota')}
           </button>
-          <WindowStartButton index={entry.file.authIndex} disabled={disabled || loading} />
+          <WindowStartButton
+            index={entry.file.authIndex}
+            disabled={disabled || loading || quota?.fiveHourLimit === 'uncapped'}
+          />
           {quota?.windows.length ? (
             <details className={styles.details}>
               <summary
@@ -232,6 +242,20 @@ function ClaudeLedgerRow({
           ) : null}
         </div>
       </div>
+      <ClaudeResetGrantDialog
+        open={reset.open}
+        grants={reset.grants}
+        selected={reset.selected}
+        canRedeemGrant={reset.canRedeemGrant}
+        onSelect={reset.selectGrant}
+        busy={reset.busy}
+        loading={reset.loading}
+        pendingGrantId={reset.pendingGrantId}
+        message={reset.message}
+        name={name}
+        onConfirm={() => void reset.confirm()}
+        onClose={reset.closeDialog}
+      />
     </article>
   );
 }

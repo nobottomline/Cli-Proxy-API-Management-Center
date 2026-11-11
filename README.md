@@ -15,7 +15,10 @@ existing design. Both views follow the selected light/dark theme.
 - Provider summaries show the credential count, without an aggregate Fable total.
 - Percentages are remaining allowance. Unknown provider data stays unknown.
 - **Refresh quota** reads current provider usage; it never spends a reset grant.
-- **Reset limits** uses the existing grant flow and requires confirmation.
+- Confirmed Ultra accounts without a five-hour cap show **∞**, a quiet dashed
+  track and a reminder that weekly limits still apply. Missing data stays unknown.
+- **Reset limits** opens an explicit grant chooser with type, count, expiry and
+  a live countdown. Pick an eligible grant and confirm; no grant is preselected.
 - The small session-window play controls are a separate optional extension.
 - No provider tokens, account data, management keys or private SSH configuration
   are included in the repository or build.

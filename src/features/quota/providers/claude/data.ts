@@ -6,6 +6,7 @@
 import type { TFunction } from 'i18next';
 import type {
   AuthFileItem,
+  ClaudeFiveHourLimit,
   ClaudeDollarWindow,
   ClaudeExtraUsage,
   ClaudeProfileResponse,
@@ -33,8 +34,10 @@ import {
 } from '@/utils/quota';
 import { normalizeAuthIndex } from '@/utils/authIndex';
 import type { QuotaProviderData } from '../types';
+import { resolveClaudeFiveHourLimit } from './sessionLimit';
 
 export type ClaudeQuotaData = {
+  fiveHourLimit: ClaudeFiveHourLimit;
   windows: ClaudeQuotaWindow[];
   extraUsage?: ClaudeExtraUsage | null;
   planType?: string | null;
@@ -263,6 +266,7 @@ const fetchClaudeQuota = async (file: AuthFileItem, t: TFunction): Promise<Claud
       : null;
 
   return {
+    fiveHourLimit: resolveClaudeFiveHourLimit(payload, planType),
     windows,
     extraUsage: snapshot.extraUsage,
     dollarWindows,
@@ -281,6 +285,7 @@ export const CLAUDE_CONFIG: QuotaProviderData<ClaudeQuotaState, ClaudeQuotaData>
   buildLoadingState: () => ({ status: 'loading', windows: [] }),
   buildSuccessState: (data) => ({
     status: 'success',
+    fiveHourLimit: data.fiveHourLimit,
     windows: data.windows,
     extraUsage: data.extraUsage,
     planType: data.planType,

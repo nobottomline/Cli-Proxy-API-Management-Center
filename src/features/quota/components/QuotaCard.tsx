@@ -21,6 +21,7 @@ import { bindQuotaClasses } from '../types';
 import { QUOTA_ADAPTERS, type QuotaCardState } from '../providers';
 import { isQuotaRefreshDisabled, type QuotaFileEntry } from '../logic';
 import { useClaudeResetGrants } from '../providers/claude/ClaudeResetGrants';
+import { ClaudeResetGrantDialog } from '../providers/claude/ClaudeResetGrantDialog';
 import { ClaudeResetGrantDetails } from '../providers/claude/ClaudeResetGrantDetails';
 import { hasClaudeUsageData } from '../providers/claude/data';
 import bodyStyles from './QuotaBody.module.scss';
@@ -138,7 +139,14 @@ export function QuotaCard(props: QuotaCardProps) {
         </span>
         <QuotaIdentity className={styles.fileName} name={displayName} hidden={hideEmails} />
         {entry.type === 'claude' && (
-          <WindowStartButton index={file.authIndex} disabled={!canRefresh || !!file.disabled} />
+          <WindowStartButton
+            index={file.authIndex}
+            disabled={
+              !canRefresh ||
+              !!file.disabled ||
+              (quota as ClaudeQuotaState | undefined)?.fiveHourLimit === 'uncapped'
+            }
+          />
         )}
       </header>
 
@@ -199,7 +207,8 @@ export function QuotaCard(props: QuotaCardProps) {
               type="button"
               className={styles.actionPill}
               disabled={claudeReset.blocked}
-              onClick={claudeReset.confirm}
+              onClick={claudeReset.openDialog}
+              aria-haspopup="dialog"
               title={t(`claude_reset.${claudeReset.buttonLabel}`)}
             >
               <IconRefreshCw size={13} className={claudeReset.busy ? styles.spinning : undefined} />
@@ -229,6 +238,22 @@ export function QuotaCard(props: QuotaCardProps) {
             {t('auth_files.quota_refresh_single')}
           </button>
         </footer>
+      )}
+      {entry.type === 'claude' && (
+        <ClaudeResetGrantDialog
+          open={claudeReset.open}
+          grants={claudeReset.grants}
+          selected={claudeReset.selected}
+          canRedeemGrant={claudeReset.canRedeemGrant}
+          onSelect={claudeReset.selectGrant}
+          busy={claudeReset.busy}
+          loading={claudeReset.loading}
+          pendingGrantId={claudeReset.pendingGrantId}
+          message={claudeReset.message}
+          name={displayName}
+          onConfirm={() => void claudeReset.confirm()}
+          onClose={claudeReset.closeDialog}
+        />
       )}
     </article>
   );

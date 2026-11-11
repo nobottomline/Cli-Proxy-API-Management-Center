@@ -106,16 +106,28 @@ class Handler(BaseHTTPRequestHandler):
             COUNTS['reset_grant_reads'] += 1
             self.upstream(200, {'cedar_ember': {
                 'eligible': True, 'at_limit': True, 'next_grant_id': 'demo-grant',
-                'grants': [{'id': 'demo-grant', 'label': 'Demo reset', 'resets_total': 2,
-                            'resets_left': 2, 'starts_at': at(-24), 'ends_at': at(168),
-                            'clears': ['five_hour', 'seven_day'], 'paused': False,
-                            'usable_now': True, 'use_requires_limit': False}],
+                'grants': [
+                    {'id': 'demo-grant', 'label': 'Weekly allowance', 'type': 'full',
+                     'resets_total': 1, 'resets_left': 1, 'starts_at': at(-24), 'ends_at': at(168),
+                     'clears': ['five_hour', 'seven_day'], 'paused': False, 'usable_now': True,
+                     'use_requires_limit': False, 'gives_back_weekly': False,
+                     'percent_used': {'seven_day': 25}},
+                    {'id': 'demo-fable', 'label': 'Fable refill', 'type': 'full',
+                     'resets_total': 1, 'resets_left': 1, 'starts_at': at(-24), 'ends_at': at(36),
+                     'clears': ['five_hour', 'seven_day_overage_included'], 'paused': False,
+                     'usable_now': True, 'use_requires_limit': False, 'gives_back_weekly': True,
+                     'percent_used': {'seven_day_overage_included': 40}},
+                    {'id': 'demo-future', 'label': 'Next session reset', 'type': 'session',
+                     'resets_total': 1, 'resets_left': 1, 'starts_at': at(24), 'ends_at': at(192),
+                     'clears': ['five_hour'], 'paused': False, 'usable_now': False,
+                     'use_requires_limit': False},
+                ],
                 'weekly_resets_at': at(144), 'cooldown_until': None}})
         elif '/api/oauth/usage' in url:
             COUNTS['quota_reads_' + str(number)] += 1
             week, session, fable = PERCENTAGES[number % len(PERCENTAGES)]
             self.upstream(200, {
-                'five_hour': {'utilization': session, 'resets_at': at(1 if number == 1 else 4) if session else None},
+                'five_hour': None if number == 2 else {'utilization': session, 'resets_at': at(1 if number == 1 else 4) if session else None},
                 'seven_day': {'utilization': week, 'resets_at': at(8 if number == 1 else 72 + number * 12)},
                 'limits': [{'kind': 'weekly_scoped', 'scope': {'model': {'display_name': 'Fable 5'}},
                             'percent': fable, 'is_active': True, 'resets_at': at(72 + number * 12)}],
